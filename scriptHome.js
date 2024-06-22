@@ -204,5 +204,5 @@ function atualizarMaiorMedia() {
   const maiorMedia = encontrarMaiorMedia(mediaMaterias);
   document.getElementById(
     "maior-media"
-  ).textContent = `A maior média entre as matérias é: ${maiorMedia}`;
+  ).textContent = `A maior média entre as matérias é: ${maiorMedia.toFixed(2)}`;
 }
