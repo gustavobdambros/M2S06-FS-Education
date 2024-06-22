@@ -13,9 +13,7 @@ document.addEventListener("DOMContentLoaded", () => {
       "Matéria preferida: " + aluno.materia;
   }
 
-  // Verifica se já existem dados iniciais no localStorage, senão adiciona
   if (!localStorage.getItem("notasMaterias")) {
-    // Array de objetos com dados iniciais das matérias
     const dadosIniciais = [
       {
         nome: "Matemática",
@@ -40,15 +38,13 @@ document.addEventListener("DOMContentLoaded", () => {
       },
     ];
 
-    // Salvar o array no localStorage convertendo para JSON
     localStorage.setItem("notasMaterias", JSON.stringify(dadosIniciais));
   }
 
-  // Carregar dados iniciais das matérias da localStorage
   const dadosIniciais = JSON.parse(localStorage.getItem("notasMaterias"));
   if (dadosIniciais && dadosIniciais.length > 0) {
     const tbody = document.getElementById("tabela-body");
-    tbody.innerHTML = ""; // Limpar tabela antes de adicionar novos dados
+    tbody.innerHTML = "";
 
     dadosIniciais.forEach((materia) => {
       const notas = [
@@ -61,7 +57,6 @@ document.addEventListener("DOMContentLoaded", () => {
       adicionarLinhaTabela(materia.nome, notas, media);
     });
 
-    // Atualizar a média geral com base nos dados iniciais
     mediaMaterias = dadosIniciais.map((materia) => {
       const notas = [
         materia.nota1,
@@ -75,6 +70,28 @@ document.addEventListener("DOMContentLoaded", () => {
     atualizarMediaGeral();
     atualizarMaiorMedia();
   }
+
+  // Fetch the list of students from the JSON server
+  fetch("http://localhost:3000/alunos")
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error("Network response was not ok " + response.statusText);
+      }
+      return response.json();
+    })
+    .then((data) => {
+      const listaAlunos = document.getElementById("lista-alunos");
+      listaAlunos.innerHTML = ""; // Clear the list before adding new items
+
+      data.forEach((aluno) => {
+        const li = document.createElement("li");
+        li.textContent = aluno.nome;
+        listaAlunos.appendChild(li);
+      });
+    })
+    .catch((error) =>
+      console.error("Erro ao carregar lista de alunos:", error)
+    );
 });
 
 document.getElementById("add-linha").addEventListener("click", () => {
@@ -82,7 +99,6 @@ document.getElementById("add-linha").addEventListener("click", () => {
   atualizarMediaGeral();
   atualizarMaiorMedia();
 
-  // Atualizar localStorage com os novos dados adicionados
   const tbody = document.getElementById("tabela-body");
   const ultimaLinha = tbody.lastChild;
   const materia = ultimaLinha.firstChild.textContent;
@@ -129,7 +145,6 @@ function adicionarLinha() {
   mediaMaterias.push(parseFloat(media));
   adicionarLinhaTabela(materia, notas, media);
 
-  // Atualizar localStorage com os novos dados adicionados
   const novaMateria = {
     nome: materia,
     nota1: notas[0],
